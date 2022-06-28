@@ -1,12 +1,17 @@
 project(SmartRedis)
 
 cmake_minimum_required(VERSION 3.10)
+enable_language(Fortran)
 
 option(BUILD_PYTHON "Build the python module" ON)
 
 set(CMAKE_BUILD_TYPE RELEASE)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_STANDARD 19)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/install)
+set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/include)
+message("Fortran_COMPILER_NAME = ${Fortran_COMPILER_NAME}")
+
 add_link_options(-lpthread)
 
 add_compile_options(-fvisibility=default)
@@ -70,7 +75,7 @@ install(TARGETS smartredis
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/"
         DESTINATION "include"
         FILES_MATCHING
-        PATTERN "*.h" PATTERN "*.tcc" PATTERN "*.inc"
+        PATTERN "*.h" PATTERN "*.tcc" PATTERN "*.inc" PATTERN "*.mod"
 )
 
 if(BUILD_PYTHON)
