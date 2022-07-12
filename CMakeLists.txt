@@ -15,6 +15,7 @@ message("Fortran_COMPILER_NAME = ${Fortran_COMPILER_NAME}")
 add_link_options(-lpthread)
 
 add_compile_options(-fvisibility=default)
+add_compile_options(-g -O0)
 
 if (WERROR)
     add_compile_options(-Wall -Werror)
@@ -53,9 +54,13 @@ set(CLIENT_SRC
     src/cpp/redis.cpp
     src/cpp/metadatafield.cpp
     src/cpp/stringfield.cpp
+)
+set(FORTRAN_CLIENT_SRC
+    ${CLIENT_SRC}
     src/fortran/fortran_c_interop.F90
     src/fortran/dataset.F90
-    src/fortran/client.F90)
+    src/fortran/client.F90
+)
 
 include_directories(SYSTEM
     include
@@ -68,8 +73,14 @@ add_library(smartredis SHARED ${CLIENT_SRC})
 set_target_properties(smartredis PROPERTIES SUFFIX ".so")
 target_link_libraries(smartredis PUBLIC ${EXT_CLIENT_LIBRARIES})
 
+add_library(smartredis-fortran SHARED ${FORTRAN_CLIENT_SRC})
+target_link_libraries(smartredis-fortran PUBLIC ${EXT_CLIENT_LIBRARIES})
+set_target_properties(smartredis-fortran PROPERTIES SUFFIX ".so")
+
 # Install dynamic library and headers
 install(TARGETS smartredis
+	LIBRARY DESTINATION lib)
+install(TARGETS smartredis-fortran
 	LIBRARY DESTINATION lib)
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/include/"
